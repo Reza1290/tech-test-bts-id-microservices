@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { env } from './main/config/env.js';
 import { makeProductControllers } from './main/factories/controllers/product-controller-factory.js';
 import { createProductRoutes } from './main/routes/product-routes.js';
 
-export const createApp = () => {
+export const createApp = (): Express => {
   const app = express();
 
   app.use(helmet());
@@ -23,7 +23,7 @@ export const createApp = () => {
   return app;
 };
 
-export const startServer = () => {
+export const startServer = (): ReturnType<Express['listen']> => {
   const app = createApp();
   return app.listen(env.PORT, () => {
     console.log(`Product service running on port ${env.PORT}`);
