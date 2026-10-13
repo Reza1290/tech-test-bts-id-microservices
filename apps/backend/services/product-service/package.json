@@ -1,0 +1,34 @@
+{
+  "name": "@bts/product-service",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "dependencies": {
+    "@bts/core-models": "workspace:*",
+    "@bts/http": "workspace:*",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.36.0",
+    "express": "^5.0.0",
+    "helmet": "^8.0.0",
+    "pg": "^8.13.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/pg": "^8.11.10",
+    "dotenv": "^17.4.2",
+    "drizzle-kit": "^0.28.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

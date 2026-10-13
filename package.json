@@ -1,0 +1,22 @@
+{
+  "name": "tech-test-bts-id-microservices",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test && node --test tests/*.test.mjs",
+    "typecheck": "turbo run typecheck",
+    "check:architecture": "node scripts/check-technical-architecture.mjs",
+    "db:push": "pnpm --filter @bts/gateway-service db:push && pnpm --filter @bts/product-service db:push"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.5.0"
+  },
+  "packageManager": "pnpm@9.0.0",
+  "engines": {
+    "node": ">=20"
+  }
+}

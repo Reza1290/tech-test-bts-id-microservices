@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  product-service:
+    build:
+      context: .
+      dockerfile: apps/backend/services/product-service/Dockerfile
+    restart: unless-stopped
+    expose:
+      - "3001"
+    ports:
+      - "${PRODUCT_SERVICE_PORT:-3001}:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      PRODUCTS_DB_NAME: ${PRODUCTS_DB_NAME:-bts_products}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: .
+      dockerfile: apps/backend/services/gateway-service/Dockerfile
+    restart: unless-stopped
+    expose:
+      - "3000"
+    ports:
+      - "${GATEWAY_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      AUTH_DB_NAME: ${AUTH_DB_NAME:-bts_auth}
+      PRODUCT_SERVICE_URL: http://product-service:3001
+      JWT_SECRET: ${JWT_SECRET:-bts-id-recruitment-test-jwt-secret-key-supersecret}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+
+volumes:
+  pgdata:
