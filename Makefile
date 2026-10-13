@@ -1,4 +1,4 @@
-.PHONY: help install dev dev-gateway dev-product build typecheck lint test check-architecture clean docker-up docker-down docker-logs
+.PHONY: help install dev dev-gateway dev-product build typecheck lint test check-architecture db-push clean docker-up docker-down docker-logs
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
@@ -29,6 +29,9 @@ test:
 
 check-architecture:
 	pnpm check:architecture
+
+db-push:
+	pnpm db:push
 
 docker-up:
 	docker compose up -d --build

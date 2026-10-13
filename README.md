@@ -33,7 +33,6 @@ This project implements a decoupled, high-performance microservices backend usin
 tech-test-bts-id-microservices/
 ├── apps/
 │   ├── backend/
-│   │   ├── init-databases.sql       # PostgreSQL multi-database initialization script
 │   │   └── services/
 │   │       ├── gateway-service/     # API Gateway, Auth, Rate Limiter, Reverse Proxy (Port 3000)
 │   │       └── product-service/     # Product Catalog, Cache, CRUD Use Cases (Port 3001)
@@ -89,14 +88,34 @@ tech-test-bts-id-microservices/
    cp .env.example .env
    ```
 
-3. **Start PostgreSQL:**
+3. **Start PostgreSQL & Push Database Schema:**
    Ensure PostgreSQL is running on port 5432 with databases `bts_auth` and `bts_products`.
    You can run `docker compose up postgres -d` to start only the database container.
+   Synchronize database schemas using Drizzle:
+   ```bash
+   pnpm db:push
+   # or: make db-push
+   ```
 
 4. **Start microservices:**
    ```bash
    pnpm dev
    ```
+
+## Database Schema Synchronization (`db:push`)
+
+This project uses Drizzle ORM to manage database models. To synchronize schema definitions directly to PostgreSQL databases (`bts_auth` and `bts_products`):
+
+```bash
+pnpm db:push
+# or: make db-push
+```
+
+To run schema push for a specific service:
+```bash
+pnpm --filter @bts/gateway-service db:push
+pnpm --filter @bts/product-service db:push
+```
 
 ## Available Make Commands
 
@@ -109,6 +128,7 @@ tech-test-bts-id-microservices/
 | `make build` | Compile all TypeScript packages |
 | `make test` | Run all test suites |
 | `make check-architecture` | Validate Hexagonal Architecture boundaries |
+| `make db-push` | Push Drizzle schema to PostgreSQL databases |
 | `make docker-up` | Build and start containerized stack |
 | `make docker-down` | Stop running containers |
 | `make docker-logs` | Stream container logs |
